@@ -1,7 +1,7 @@
 # transport-optimization
 
-Input a list of location address and get a time matrix containing driving time values.
-For i, j in [1, 25]: value `a_ij` of the time matrix is the time in second to drive from i to j.
+Returns a time matrix containing driving time in seconds between input addresses.  
+For i, j in [1, 25]: value `a_ij` of the time matrix is the time to drive from address i to address j.
 
 ## APIs
 
