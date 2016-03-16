@@ -20,9 +20,9 @@ Format CSV
 
 Driving times...
 
-  from_location_1_to_location_1,  ..., from_location_1_to_location_k, ..., from_location_1_to_location_n, \
-  ...
-  from_location_k_to_location_1,  ..., from_location_k_to_location_k, ..., from_location_k_to_location_n, \
-  ...
+  from_location_1_to_location_1,  ..., from_location_1_to_location_k, ..., from_location_1_to_location_n,
+  (...)
+  from_location_k_to_location_1,  ..., from_location_k_to_location_k, ..., from_location_k_to_location_n,
+  (...)
   from_location_n_to_location_1,  ..., from_location_n_to_location_k, ..., from_location_n_to_location_n
 
