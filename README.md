@@ -18,7 +18,7 @@ with n = 25:
 
   location_n, address_n
 
-(format: CSV)
+*(format: CSV)*
 
 ## OUTPUT
 
@@ -30,4 +30,4 @@ Driving times...
 
   from_location_n_to_location_1,  ..., from_location_n_to_location_k, ..., from_location_n_to_location_n
 
-(format: CSV)
+*(format: CSV)*
