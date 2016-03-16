@@ -10,8 +10,6 @@ For i, j in [1, 25]: value `a_ij` of the time matrix is the time in second to dr
 
 ## INPUT:
 
-Format CSV
-
 with n = 25:
 
   location_1, address_1,
@@ -20,11 +18,9 @@ with n = 25:
 
   location_n, address_n
 
-
+(format: CSV)
 
 ## OUTPUT
-
-Format CSV
 
 Driving times...
 
@@ -34,3 +30,4 @@ Driving times...
 
   from_location_n_to_location_1,  ..., from_location_n_to_location_k, ..., from_location_n_to_location_n
 
+(format: CSV)
