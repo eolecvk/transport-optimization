@@ -2,7 +2,7 @@
 access_path = '/home/eolus/Dropbox/610 Project Data'
 
 # Model Parameters
-TIME_LIMIT = 1.9 * 3600
+TIME_LIMIT = 4 * 3600
 
 # Libraries
 import itertools
@@ -10,10 +10,31 @@ import pickle
 import numpy as np
 import math
 
+# Instantiate network
 
-# Input
+import networkx as nx
 
-# Time matrix
+print('Building network...')
+
+g = nx.Graph()
+
+g.graph['title'] 	= 'Transportation Network v1'
+g.graph['author']	= 'Eole CERVENKA'
+g.graph['day'] 		= 'Tuesday'
+g.graph['driver']	= 'John SMITH'
+g.graph['zone']		= 'East Boston'
+
+print('NETWORK DETAILS')
+print('***************************')
+print(g.graph)
+print('***************************')
+
+
+
+# Load input
+print('Loading input data...')
+
+## Time matrix
 time_matrix_array = pickle.load( open(access_path + '/time_matrix.pkl', 'rb') )
 
 assert(time_matrix_array.shape[0] == time_matrix_array.shape[1]), \
@@ -22,31 +43,70 @@ assert(time_matrix_array.shape[0] == time_matrix_array.shape[1]), \
 INSTANCE_SIZE = time_matrix_array.shape[0]
 
 
-# Supply/Demand parameters
-# NODES = { mode_k: supply_node_k }
-
-NODES =
-{
-	0:	0
-	1: 	10
-	2: 	-10
-	3:	10
-	4:	-10
-	5:	10
-	6:	-10
-	7:	10
-	8:	-10
-	9:	10
-	10: -10
-	11:	10
-	12:	-10
-	13:	10
-}
+## Other input: node attributes
 
 
-# Helper functions 
-def memorize(f):
-    """ Memorization decorator for functions taking one or more arguments. """
+# ******************************
+load_scores = [
+0,
+10,
+10,
+10,
+10,
+10,
+10,
+10,
+-10,
+10,
+-10,
+10,
+-10,
+10
+]
+# ******************************
+
+
+# Populate graph
+
+## Populate nodes
+for node in range(INSTANCE_SIZE):
+	g.add_node(node, load = load_scores[node])
+
+## Populate edges
+for i in range(INSTANCE_SIZE):
+	for j in range(INSTANCE_SIZE):
+		cost_ij = time_matrix_array[i,j]
+		g.add_edge(i,j, cost = cost_ij)
+
+
+# Input check
+print('**********************************')
+print('Nodes:')
+for node in g.nodes():
+	print('\t {node}'.format(node = node))
+print('**********************************')
+print()
+
+print('**********************************')
+print('nodes w data:')
+for node in g.nodes(data=True):
+	print('\t {node}'.format(node = node))
+print('**********************************')
+print()
+
+
+print('**********************************')
+print('edges w data:')
+for edge in g.edges(data=True):
+	print('\t {edge}'.format(edge = edge))
+print('**********************************')
+print()
+
+
+
+# Dynamic programming memoize function
+def memoize(f):
+    """ Memoization decorator for functions taking one or more arguments. """
     class memodict(dict):
         def __init__(self, f):
             self.f = f
@@ -57,44 +117,98 @@ def memorize(f):
             return ret
     return memodict(f)
 
-@memorize
-def get_time(p1, p2):
-    """Returns time-distance between two nodes, memorizes result"""
-    d = time_matrix_array[p1-1,p2-1]
-    return int(d)
+
+@memoize
+def get_time(node1, node2):
+    """Returns time-distance between two nodes, memoizes result"""
+    dist = g.edge[node1][node2]['cost']
+    return int(dist)
 
 
+# Returns load_score (in pound) of node1
+# >0 for supply nodes and <0 for demand nodes
+def get_load_score(node1):
+	load_score = g.node[node1]['load']
+	return load_score
 
-def find_optimal_routes():
-	"""Find shortest route of length route_length from nodes."""   
+# Returns True if load_score of node1 >0, false otherwise
+def is_supply(node1):
+	if get_load_score(node1) > 0:
+		return True
+	return False
 
-	optimal_routes = list()
 
-	i = 0
+stack_size = 5
+# List of best routes found: [(route, time), (route, time), (route, time)]
+solution_stack = []
 
-	for route in itertools.permutations(range(2, INSTANCE_SIZE+1)):
-		i += 1
-		prev_node 		= 1
+def update_stack(stack, input, time_limit):
+	if len(stack) < stack_size:
+		stack.append(input)
+	elif input[1] < time_limit:
+		stack.pop()
+		stack.append(input)
+		stack = sorted(stack, key=lambda route: route[1])   # sort by desc time
+		time_limit = stack[-1][1]
+	return stack, time_limit
+
+def gen_optimal_routes(route_stack, time_limit):
+
+	route_stack = []
+	time_limit = 999999999999999
+
+	# Keep track of progress
+	permu_size = math.factorial(INSTANCE_SIZE-1)
+	compteur_completion	= 1
+
+	for route in itertools.permutations(range(1, INSTANCE_SIZE)):
+		
+		compteur_completion	+= 1
+		second_node 	= route[1]
+		prev_node 		= 0
 		before_last_node= route[len(route)-1]
-		current_time 	= get_time(before_last_node, 1)
 
-		for next in route:
-			current_time += get_time(prev_node, next)
+		#How much do we load to last (demand) node?
+		remaining_extra_load = 0
 
-			if(current_time > TIME_LIMIT):
-				break
-			prev_node = next
+		print('COMPLETE: {completion}%'.format(completion = round((compteur_completion/permu_size)*100,2)))
 
-		route_loop = [1]
-		for node in route:
-			route_loop.append(node)
-		route_loop.append(1)
+		if not is_supply(second_node) or is_supply(before_last_node):
+			continue
 
-		if (current_time < TIME_LIMIT):
-			print('ROUTE: {route} | TIME: {time}'.format(route = route_loop, time = current_time)
-			optimal_routes.append(route_loop)
+		else:
+			current_time 	= get_time(before_last_node, 0)
+			current_load	= 0
+			route_builder = [0]
+
+			for next in route:
 				
-	return optimal_routes
+				# check for non-negativity of total current load
+				current_load += get_load_score(next)
+				if(current_load < 0):
+					break
 
+				# check for time constraint
+				current_time += get_time(prev_node, next)
+				if(current_time > time_limit):
+					break
+				
+				# add node to route in the making
+				route_builder.append(next)
 
-route_options = find_optimal_routes()
+				if(len(route_builder) == INSTANCE_SIZE -1):
+					route_builder.append(0)
+					remaining_extra_load = current_load
+
+					route_stack, time_limit = update_stack(route_stack, route_builder, time_limit)
+
+					print('ROUTE: {route} | TIME: {time} | {completion}% '\
+						.format(route = route_builder, time = current_time, completion = round((compteur_completion/permu_size)*100,2) ))
+					continue
+
+				prev_node = next
+
+	return route_stack
+
+solution_stack = gen_optimal_routes(solution_stack, TIME_LIMIT)
+print('OPTIMAL ROUTE: {routes}'.format(routes = solution_stack ))
