@@ -26,21 +26,19 @@ I developed a script to generate a distance matrix between each nodes (distance 
 `time_matrix.py` :
 
 
-##### Input
+**INPUT, format: CSV**
 *with n <= 25:*
   location_1, address_1,
   location_k, address_k,
   location_n, address_n
-format: CSV
 
-**OUTPUT**
+**OUTPUT, format: CSV**
 Returns a time matrix containing driving time in seconds between input addresses.  
 For i, j in [1, 25]: value `a_ij` in output matrix is the driving time in seconds from address i to address j:
 
   from_location_1_to_location_1,  ..., from_location_1_to_location_k, ..., from_location_1_to_location_n,
   from_location_k_to_location_1,  ..., from_location_k_to_location_k, ..., from_location_k_to_location_n,
   from_location_n_to_location_1,  ..., from_location_n_to_location_k, ..., from_location_n_to_location_n
-format: CSV
 
 ### Operational constraints
 
