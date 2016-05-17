@@ -76,7 +76,7 @@ The nature of the Travelling salesman model requires to have selected the nodes 
 
 ###### Brute-force
 
-see `brute_force_route_gen.py` 
+see `TSP_brute_force.py` 
 
 ###### Dynamic programming, Breadth-first search
 
