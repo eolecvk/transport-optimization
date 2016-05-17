@@ -19,8 +19,28 @@ I had access to the operational data of *Lovin' Spoonfuls*. The data provided by
 *`node_location` values are anonymized because I signed a Non-Disclosure Agreement with Lovin' Spoonfuls.*
 *`expected_load` values are an estimate value derived from historical data using a regression.*
 
-#### Distance matrix
-I developed a script to generate a distance matrix between each nodes (distance is interpreted as driving time in seconds). I am using `geopy.geocoders` to retrieve the coordinates values from the location address and `mapquest API` for the driving time values. The script is available in the repository as `time_matrix.py`.
+#### Distance matrix with `time_matrix.py`
+
+I developed a script to generate a distance matrix between each nodes (distance is interpreted as driving time in seconds). I am using `geopy.geocoders` to retrieve the coordinates values from the location address and `mapquest API` for the driving time values.
+
+`time_matrix.py` :
+
+
+##### Input
+*with n <= 25:*
+  location_1, address_1,
+  location_k, address_k,
+  location_n, address_n
+format: CSV
+
+**OUTPUT**
+Returns a time matrix containing driving time in seconds between input addresses.  
+For i, j in [1, 25]: value `a_ij` in output matrix is the driving time in seconds from address i to address j:
+
+  from_location_1_to_location_1,  ..., from_location_1_to_location_k, ..., from_location_1_to_location_n,
+  from_location_k_to_location_1,  ..., from_location_k_to_location_k, ..., from_location_k_to_location_n,
+  from_location_n_to_location_1,  ..., from_location_n_to_location_k, ..., from_location_n_to_location_n
+format: CSV
 
 ### Operational constraints
 
@@ -58,55 +78,3 @@ see `brute_force_route_gen.py`
 ###### Dynamic programming, Breadth-first search
 
 see `TSP_dynamic_programming.ipynb`
-
-
-
-
-
-
-
---------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------
-## THE END...
---------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-## Generate time matrix with `time_matrix.py`
-
-Returns a time matrix containing driving time in seconds between input addresses.  
-For i, j in [1, 25]: value `a_ij` of the time matrix is the time to drive from address i to address j.
-
-**APIs**
-
-* `geopy.geocoders` for the coordinates values
-* `mapquest` for the driving time values
-
-**INPUT**
-
-with n = 25:
-
-  location_1, address_1,
-
-  location_k, address_k,
-
-  location_n, address_n
-
-*(format: CSV)*
-
-**OUTPUT**
-
-Returns a time matrix containing driving time in seconds between input addresses.
-For i, j in [1, 25]: value a_ij of the time matrix is the time to drive from address i to address j.
-
-  from_location_1_to_location_1,  ..., from_location_1_to_location_k, ..., from_location_1_to_location_n,
-
-  from_location_k_to_location_1,  ..., from_location_k_to_location_k, ..., from_location_k_to_location_n,
-
-  from_location_n_to_location_1,  ..., from_location_n_to_location_k, ..., from_location_n_to_location_n
-
-*(format: CSV)*
