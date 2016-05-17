@@ -8,34 +8,56 @@ This project includes concepts from the field of operation research, graph theor
 
 ### Data
 
-* Node data
-I had access to the operational data of *Lovin' Spoonfuls* but cannot display it online because I signed a NDA. The data provided by the organization are used as node attributes. The node attributes include:
-- node_id
-- node_location
-- expected_load
-- start_time
-- end_time
+#### Node data
+I had access to the operational data of *Lovin' Spoonfuls*. The data provided by the organization are used as node attributes. The node attributes include:
+  * `node_id`: unique identifier for a node
+  * `node_location`: exact address in the format [street_address, street_name, city, zip]
+  * `expected_load`: supply (case: expected_load > 0) or demand (case: expected_load < 0)
+  * `start_time`: beginning time of the node time window in 24:00hrs format
+  * `end_time`: ending time of the node time window in 24:00hrs format
 
-* Distance matrix
+*`node_location` values are anonymized because I signed a Non-Disclosure Agreement with Lovin' Spoonfuls.*
+*`expected_load` values are an estimate value derived from historical data using a regression.*
+
+#### Distance matrix
 I developed a script to generate a distance matrix between each nodes (distance is interpreted as driving time in seconds). I am using `geopy.geocoders` to retrieve the coordinates values from the location address and `mapquest API` for the driving time values. The script is available in the repository as `time_matrix.py`.
 
 ### Operational constraints
 
-*Lovin' Spoonfuls* 
-has a certain number of truck/drivers.
-
+The operations of *Lovin' Spoonfuls* are subject to a number of operational constraints. Specifically:
+- There is a fixed and finite number of truck/drivers.
+- The drivers will drive given maximum number of hours a day.
+- Trucks have a maximum load capacity (although empirically this is not a binding constraint)
+- Food that is picked up needs to be delivered on the same day (storage is not an option)
+- Supply and demand nodes have time windows and are not accessible outside of their specific time windows
+- Food supply is uncertain and can only be estimated based on historical data
 
 ### Objective
 
 The overall objective is to optimize the operation of *Lovin' Spoonfuls* in terms of the quantity of food they are able to rescue per week given their operational constraints.
-
-My goal was to find the best routes for the drivers of *Lovin' Spoonfuls*, in terms of  in a day.
 I worked on multiple models to optimize the overall route schedule of *Lovin' Spoonfuls*.
+Each model addresses a specific aspect of the route schedule optimization.
+
+#### Sub-objective #1: 
+
+##### Optimize a route given a set of nodes using the Travelling Salesman model
+
+A simplification of the objective could be to find the best routes on a given day, given a set of nodes.
 The Travelling Salesman model aims specifically at finding the best route given a predetermined set of nodes.
 
-### Assumption
-The nature of the Travelling salesman model requires to have selected the nodes the driver will go through during his or her journey. The travelling salesman model alone is not helpful in determining which nodes should be included in the route and which should not.
-It is possible to perform multiple iterations of the TSP on different sets of nodes and to find an optimal result put this approach would be rather inefficient.
+##### Assumption
+
+The nature of the Travelling salesman model requires to have selected the nodes the driver will go through during his or her journey. The travelling salesman model alone is not helpful in determining which nodes should be included in the route and which should not. It is possible to perform multiple iterations of the TSP on different sets of nodes and to find an optimal result put this approach would be rather inefficient.
+
+##### Algorithms
+
+###### Brute-force
+
+see `brute_force_route_gen.py` 
+
+###### Dynamic programming, Breadth-first search
+
+see `TSP_dynamic_programming.ipynb`
 
 
 
@@ -43,13 +65,11 @@ It is possible to perform multiple iterations of the TSP on different sets of no
 
 
 
-
-
-
-
-
-
-
+--------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
+## THE END...
+--------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 
 
 
@@ -90,9 +110,3 @@ For i, j in [1, 25]: value a_ij of the time matrix is the time to drive from add
   from_location_n_to_location_1,  ..., from_location_n_to_location_k, ..., from_location_n_to_location_n
 
 *(format: CSV)*
-
-
-## Generate brute force feasible routes using `brute_force_route_gen.py` 
-
-**Parameters:**
-`TIME_LIMIT` maximum total driving time threshold (routes with driving time superior to TIME_LIMIT are filtered out from the solutions set.
