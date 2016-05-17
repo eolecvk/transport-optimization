@@ -47,7 +47,7 @@ The Travelling Salesman model aims specifically at finding the best route given 
 
 ##### Assumption
 
-The nature of the Travelling salesman model requires to have selected the nodes the driver will go through during his or her journey. The travelling salesman model alone is not helpful in determining which nodes should be included in the route and which should not. It is possible to perform multiple iterations of the TSP on different sets of nodes and to find an optimal result put this approach would be rather inefficient.
+The nature of the Travelling salesman model requires to have selected the nodes the driver will go through during his or her journey. The travelling salesman model alone is not helpful in determining which nodes should be included in the route and which should not. It is possible to perform multiple iterations of the TSP on different sets of nodes and to find an optimal result but this approach is rather inefficient.
 
 ##### Algorithms
 
