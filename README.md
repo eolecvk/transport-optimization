@@ -27,6 +27,7 @@ I developed a script to generate a distance matrix between each nodes (distance 
 
 
 **INPUT, format: CSV**
+
 *with n <= 25:*
   location_1, address_1,
   
@@ -35,6 +36,7 @@ I developed a script to generate a distance matrix between each nodes (distance 
   location_n, address_n
 
 **OUTPUT, format: CSV**
+
 Returns a time matrix containing driving time in seconds between input addresses.  
 For i, j in [1, 25]: value `a_ij` in output matrix is the driving time in seconds from address i to address j:
 
